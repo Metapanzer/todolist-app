@@ -3,38 +3,54 @@ import "./style.css";
 import "bootstrap/dist/css/bootstrap.css";
 import React from "react";
 import TodoItem from "./components/todoitem";
+import Axios from "axios";
 // import TodoItem from "./components/todoitemsF";
 
 class App extends React.Component {
   state = {
-    todoList: [
-      { activity: "Makan", id: 1 },
-      { activity: "Mandi", id: 2 },
-      { activity: "Main", id: 3 },
-    ],
+    todoList: [],
     inputTodo: "",
   };
 
-  deleteTodo = (id) => {
-    this.setState({
-      todoList: this.state.todoList.filter((val) => {
-        return val.id !== id;
-      }),
-    });
+  fetchTodo = () => {
+    Axios.get("http://localhost:2000/todo").then((response) =>
+      this.setState({ todoList: response.data })
+    );
   };
 
-  renderTodoList = () => {
-    return this.state.todoList.map((val) => {
-      return <TodoItem deleteTodoHandler={this.deleteTodo} todoData={val} />;
+  deleteTodo = (id) => {
+    Axios.delete(`http://localhost:2000/todo/${id}`).then(() => {
+      this.fetchTodo();
     });
   };
 
   addTodo = () => {
-    this.setState({
-      todoList: [
-        ...this.state.todoList,
-        { activity: this.state.inputTodo, id: this.state.todoList.length + 1 },
-      ],
+    Axios.post("http://localhost:2000/todo", {
+      activity: this.state.inputTodo,
+      isFinished: false,
+    }).then(() => {
+      this.fetchTodo();
+    });
+  };
+
+  completeTodo = (id) => {
+    Axios.patch(`http://localhost:2000/todo/${id}`, { isFinished: true }).then(
+      () => {
+        alert(`Task ${id} is Completed!`);
+        this.fetchTodo();
+      }
+    );
+  };
+
+  renderTodoList = () => {
+    return this.state.todoList.map((val) => {
+      return (
+        <TodoItem
+          completeTodoHandler={this.completeTodo}
+          deleteTodoHandler={this.deleteTodo}
+          todoData={val}
+        />
+      );
     });
   };
 
@@ -46,6 +62,9 @@ class App extends React.Component {
     return (
       <div>
         <h1>Todo List</h1>
+        <button onClick={this.fetchTodo} className="btn btn-primary">
+          Get My To Do List
+        </button>
         {this.renderTodoList()}
         <div>
           <input onChange={this.inputHandler} type="text" className="mx-3" />

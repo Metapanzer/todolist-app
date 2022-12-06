@@ -1,0 +1,29 @@
+{
+  "todo": [
+    {
+      "isFinished": false,
+      "activity": "Eat",
+      "id": 1
+    },
+    {
+      "isFinished": false,
+      "activity": "Bath",
+      "id": 2
+    },
+    {
+      "isFinished": false,
+      "activity": "Play",
+      "id": 3
+    },
+    {
+      "isFinished": false,
+      "activity": "Sleep",
+      "id": 4
+    },
+    {
+      "activity": "Swim",
+      "isFinished": false,
+      "id": 5
+    }
+  ]
+}
